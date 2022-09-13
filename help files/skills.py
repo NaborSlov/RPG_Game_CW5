@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from unit import BaseUnit
 
+
 class Skill(ABC):
     """
     Базовый класс умения
@@ -52,12 +53,13 @@ class FuryPunch(Skill):
     damage = ...
 
     def skill_effect(self):
+        return self.name
         # TODO логика использования скилла -> return str
         # TODO в классе нам доступны экземпляры user и target - можно использовать любые их методы
         # TODO именно здесь происходит уменшение стамины у игрока применяющего умение и
         # TODO уменьшение здоровья цели.
         # TODO результат применения возвращаем строкой
-        pass
+
 
 class HardShot(Skill):
     name = ...
@@ -66,3 +68,4 @@ class HardShot(Skill):
 
     def skill_effect(self):
         pass
+
