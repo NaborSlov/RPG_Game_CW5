@@ -22,9 +22,18 @@ class Skill(ABC):
 
     @abstractmethod
     def skill_effect(self):
+        """
+        Нанесения урона навыком
+        """
         pass
 
-    def use(self, user, target):
+    def use(self, user, target) -> str:
+        """
+        Метод использования навыка
+
+        :param user: тот кто использует скилл
+        :param target: цель которую атакует user
+        """
         self.user = user
         self.target = target
 
@@ -39,7 +48,7 @@ class FeroKick(Skill):
     attack: int = 6
     stamina_per_hit: int = 12
 
-    def skill_effect(self):
+    def skill_effect(self) -> str:
         self.target.get_damage(self.attack)
         self.user.stamina_points -= self.stamina_per_hit
         return f"{self.user.name} воспользовался свирепым пинком и нанес {self.attack}"
@@ -50,7 +59,7 @@ class PowerInject(Skill):
     attack: int = 5
     stamina_per_hit: int = 15
 
-    def skill_effect(self):
+    def skill_effect(self) -> str:
         self.target.get_damage(self.attack)
         self.user.stamina_points -= self.stamina_per_hit
         return f"{self.user.name} воспользовался мощным уколом и нанес {self.attack}"

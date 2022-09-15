@@ -20,12 +20,21 @@ class BaseUnit(ABC):
         self._is_skill_used = True
 
     def get_weapon(self, weapon: Weapon):
+        """
+        Присваивание оружия
+        """
         self.weapon = weapon
 
     def get_armor(self, armor: Armor):
+        """
+        Присваивание брони
+        """
         self.armor = armor
 
-    def _count_damage(self, target: BaseUnit):
+    def _count_damage(self, target: BaseUnit) -> float:
+        """
+        Подсчет урона который будет нанесен и уменьшения выносливости защищающегося
+        """
         damage = 0
         if target.stamina_points > target.weapon.stamina_per_hit:
             target.stamina_points -= target.weapon.stamina_per_hit
@@ -43,18 +52,30 @@ class BaseUnit(ABC):
         return round(damage, 1)
 
     def get_damage(self, damage: int):
+        """
+        Получение урона
+        """
         if damage > 0:
             self.health_points -= damage
             self.health_points = round(self.health_points, 1)
 
-    def skill_attack(self, target: BaseUnit):
+    def skill_attack(self, target: BaseUnit) -> str:
+        """
+        Применение навыка
+        """
+        if self._is_skill_used:
+            return 'Навык уже использован.'
+
         return self.unit_class.skill.use(self, target)
 
-    def _hit_target(self, target: BaseUnit):
+    def _hit_target(self, target: BaseUnit) -> str:
+        """
+        Удар по цели
+        """
         if self.stamina_points > self.weapon.stamina_per_hit:
             damage = target._count_damage(self)
 
-            if target.stamina_points > target.armor.stamina_per_turn and damage < 0:
+            if target.stamina_points > target.armor.stamina_per_turn and damage <= 0.0:
                 return f"{self.name} используя {self.weapon.name} наносит удар, " \
                        f"но {target.armor.name} cоперника его останавливает."
 

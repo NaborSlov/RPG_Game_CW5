@@ -32,27 +32,40 @@ class EquipmentData:
     armors: list[Armor] = field(default_factory=list)
 
 
-EquipmentDataSchema = marshmallow_dataclass.class_schema(EquipmentData)
-
-
 class Equipment:
     @staticmethod
-    def __json_read(path: str) -> EquipmentData:
-        with open(path, encoding='UTF-8') as file:
-            return EquipmentDataSchema().load(json.load(file))
+    def _json_read(path: str) -> EquipmentData:
+        """
+        Загрузка данных из json с экипировкой в EquipmentData
+        """
+        equipment_schema = marshmallow_dataclass.class_schema(EquipmentData)
 
-    def __init__(self, path_data: str):
-        self.equipment: EquipmentData = self.__json_read(path_data)
+        with open(path, encoding='UTF-8') as file:
+            return equipment_schema().load(json.load(file))
+
+    def __init__(self, path_data: str) -> None:
+        self.equipment: EquipmentData = self._json_read(path_data)
 
     def get_weapon(self, weapon_name: str) -> Weapon:
+        """
+        Получение оружия по его имени
+        """
         return next(filter(lambda x: x.name == weapon_name, self.equipment.weapons))
 
     def get_armor(self, name_armor: str) -> Armor:
+        """
+        Получение брони по его имени
+        """
         return next(filter(lambda x: x.name == name_armor, self.equipment.armors))
 
     def get_weapon_name(self) -> list[str]:
+        """
+        Получение списка имен оружия
+        """
         return list(map(lambda x: x.name, self.equipment.weapons))
 
     def get_armor_name(self) -> list[str]:
+        """
+        Получение списка имен брони
+        """
         return list(map(lambda x: x.name, self.equipment.armors))
-

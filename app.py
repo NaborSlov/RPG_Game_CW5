@@ -1,13 +1,14 @@
 from flask import Flask, render_template, request, redirect
 
-from equipment import Equipment
 from arena import Arena
 from classes import dict_class
+from equipment import Equipment
 from unit import BaseUnit, Player, Enemy
 
 app = Flask(__name__)
 
-arena = Arena()
+arena: Arena
+
 equipment = Equipment('data/equipment.json')
 
 result = {'header': "",
@@ -20,11 +21,20 @@ heroes: dict[str, BaseUnit] = {}
 
 @app.route('/')
 def menu_page():
+    """
+    Кнопка начала игры
+    """
+    global arena
+    arena = Arena()
+
     return render_template('index.html')
 
 
 @app.route('/choose-hero/', methods=['GET', 'POST'])
 def choose_hero():
+    """
+    Выбор героя
+    """
     if request.method == 'GET':
         result['header'] = "Выберете героя"
         return render_template('hero_choosing.html', result=result)
@@ -39,6 +49,9 @@ def choose_hero():
 
 @app.route('/choose-enemy/', methods=['GET', 'POST'])
 def choose_enemy():
+    """
+    Выбор врага
+    """
     if request.method == 'GET':
         result['header'] = "Выберете врага"
         return render_template('hero_choosing.html', result=result)
@@ -53,29 +66,41 @@ def choose_enemy():
 
 @app.route('/fight/')
 def fight():
+    """
+    Начало игры
+    """
     arena.start_game(**heroes)
     return render_template('fight.html', heroes=heroes)
 
 
 @app.route('/fight/hit/')
 def hit():
+    """
+    Кнопка удара
+    """
     return render_template('fight.html', heroes=heroes, result=arena.hit_player())
 
 
 @app.route('/fight/use-skill/')
 def skill_attack():
+    """
+    Кнопка применения умения игроком
+    """
     return render_template('fight.html', heroes=heroes, result=arena.use_skill_player())
 
 
 @app.route('/fight/pass-turn/')
 def skip_turn():
+    """
+    Пропуск хода
+    """
     return render_template('fight.html', heroes=heroes, result=arena.next_turn())
 
 
 @app.route('/fight/end-fight/')
 def end_fight():
+    """
+    Конец игры, и переход на кнопку начала игры
+    """
+    arena.end_final_game()
     return redirect('/')
-
-
-if __name__ == '__main__':
-    app.run()
